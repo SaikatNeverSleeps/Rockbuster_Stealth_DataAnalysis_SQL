@@ -1,0 +1,54 @@
+--The Inner Queries returns the top 5 customers from the top 10 cities which are from the top 10 countries. The Outer query Returns the Total Customer Count and Top Customer Count from the countries where those top 5 customers reside.
+
+WITH top_10_countries AS										
+	(SELECT co.country_id,co.country, COUNT(cu.customer_id) count_of_customers									
+	FROM customer cu									
+	INNER JOIN address ad									
+		ON cu.address_id = ad.address_id								
+	INNER JOIN city ct									
+		ON ad.city_id = ct.city_id								
+	INNER JOIN country co									
+		ON ct.country_id = co.country_id								
+	GROUP BY 1,2									
+	ORDER BY 3 DESC									
+	LIMIT 10),									
+top_10_cities AS -- top 10 cities from top 10 countries										
+	(SELECT co.country, ct.city_id, COUNT(cu.customer_id) count_of_customers									
+	FROM customer cu									
+	INNER JOIN address ad									
+		ON cu.address_id = ad.address_id								
+	INNER JOIN city ct									
+		ON ad.city_id = ct.city_id								
+	INNER JOIN country co									
+		ON ct.country_id = co.country_id								
+	INNER JOIN top_10_countries									
+		ON top_10_countries.country_id = co.country_id								
+	GROUP BY 1,2									
+	ORDER BY 3 DESC									
+	LIMIT 10), 									
+top_5_customers	AS --top 5 customer from top 10 cities which are from top 10 countries									
+	(SELECT cu.customer_id, cu.first_name, cu.last_name, co.country, ct.city, SUM(pm.amount) total_amount_paid									
+	FROM customer cu									
+	INNER JOIN address ad									
+		ON cu.address_id = ad.address_id								
+	INNER JOIN city ct									
+		ON ad.city_id = ct.city_id								
+	INNER JOIN country co									
+		ON ct.country_id = co.country_id								
+	INNER JOIN payment pm									
+		ON cu.customer_id = pm.customer_id								
+	INNER JOIN top_10_cities									
+		ON top_10_cities.city_id = ct.city_id								
+	GROUP BY 1,2,3,4,5									
+	ORDER BY 6 DESC									
+	LIMIT 5)									
+										
+SELECT co.country, COUNT(DISTINCT cu.customer_id) all_customer_count, COUNT(DISTINCT top_5_customers.customer_id)										
+FROM customer cu										
+INNER JOIN address ad ON cu.address_id = ad.address_id										
+INNER JOIN city ct ON ad.city_id = ct.city_id 										
+INNER JOIN country co ON ct.country_id = co.country_id										
+LEFT JOIN top_5_customers ON top_5_customers.customer_id = cu.customer_id										
+GROUP BY co.country										
+ORDER BY 3 DESC , 2 DESC										
+LIMIT 5;			
