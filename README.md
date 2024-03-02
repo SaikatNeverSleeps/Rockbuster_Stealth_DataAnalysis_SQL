@@ -34,7 +34,7 @@ The data for this project is fabricated and provided by CareerFoundry. The datas
 - Excel File detailing SQL Queries and Data Outputs
 - Powerpoint Presentation detailing Analysis and Recommendations
 - Data Dictionary created by using DB Visualizer
-- Tableau Dashboard: [Rockbuster Data Story](https://public.tableau.com/app/profile/saikat.halder8065/viz/RockbusterStealthDataAnalysisProject1_0/ARockbusterDataStory?publish=yes)
+- Tableau Dashboard
 
 ## Next Steps
 
