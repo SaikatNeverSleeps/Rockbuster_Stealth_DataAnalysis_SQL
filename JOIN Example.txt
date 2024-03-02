@@ -1,0 +1,12 @@
+-- This query returns the top 10 movies from all categories based on total revenue							
+
+SELECT flm.title film_name, ctg. name category, SUM(pm.amount) total_revenue_gain							
+FROM payment pm							
+INNER JOIN rental rt ON pm.rental_id = rt.rental_id							
+INNER JOIN inventory inv ON rt.inventory_id = inv.inventory_id							
+INNER JOIN film flm ON inv.film_id = flm.film_id							
+INNER JOIN film_category fct ON flm.film_id = fct.film_id							
+INNER JOIN category ctg ON fct.category_id = ctg.category_id							
+GROUP BY 1,2							
+ORDER BY 3 DESC							
+LIMIT 10;					
